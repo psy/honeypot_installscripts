@@ -44,16 +44,15 @@ $PIP_CMD install glastopf
 echo "Upgradeing greenlet"
 $PIP_CMD install --upgrade greenlet
 
-# Install mysql and create mysql user
-echo -e "Installing mysql-server for logging, remember password!"
-read -p "Hit [ENTER] to continue."
-
 echo "Creating glastopf directory and creating config files"
 mkdir -p ${GT_INSTALL_DIR}
 cd ${GT_INSTALL_DIR}
-glastopf-runner&
+glastopf-runner &> /dev/null &
 GT_PID=$!
 
+# Install mysql and create mysql user
+echo -e "Installing mysql-server for logging, remember password!"
+read -p "Hit [ENTER] to continue."
 $APT_CMD $APT_OPTS install mysql-server
 mysql_pw=$(pwgen 30 1)
 echo "CREATE DATABASE glastopf; GRANT ALL ON glastopf.* TO 'glastopf'@'localhost' IDENTIFIED BY '$mysql_pw'" | mysql -u root -h localhost -p
@@ -72,77 +71,56 @@ sed -i "s/\(consolelog_enabled *= *\).*/\1False/" ${GT_INSTALL_DIR}glastopf.cfg
 # Currently not working beacause of "ValueError: sample larger than population"
 #sed -i "s/\(connection_string *= *\).*/\1mysql:\/\/glastopf:$mysql_pw@localhost\/glastopf/" ${GT_INSTALL_DIR}glastopf.cfg
 
-
-# Sample init script by http://werxltd.com/wp/2012/01/05/simple-init-d-script-template/
-cat > /etc/init.d/glastopf <<"EOF"
+cat > /etc/init.d/glastopf <<EOF
 #!/bin/bash
+
+# Author: Miguel Cabrerizo <doncicuto@gmail.com>
 
 ### BEGIN INIT INFO
 # Provides:          glastopf
-# Required-Start:    $remote_fs $network $syslog
-# Required-Stop:     $remote_fs $network $syslog
+# Required-Start:    \$remote_fs \$network \$syslog
+# Required-Stop:     \$remote_fs \$network \$syslog
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Start glastopf
 # Description:       Glastopf is a web application honeypot.
 ### END INIT INFO
 
-DAEMON_PATH="/opt/glastopf/"
-DAEMON=glastopf-runner
+DAEMON_PATH="${GT_INSTALL_DIR}"
+DAEMON="$(which glastopf-runner)""
  
-NAME=glastopf
+NAME="glastopf"
 DESC="Glastopf Honeypot"
-PIDFILE=/var/run/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
- 
-case "$1" in
-start)
-    printf "%-50s" "Starting $NAME..."
-    cd $DAEMON_PATH
-    PID=`$DAEMON > /dev/null 2>&1 & echo $!`
-    #echo "Saving PID" $PID " to " $PIDFILE
-        if [ -z $PID ]; then
-            printf "%s\n" "Fail"
-        else
-            echo $PID > $PIDFILE
-            printf "%s\n" "Ok"
-        fi
-;;
-status)
-        printf "%-50s" "Checking $NAME..."
-        if [ -f $PIDFILE ]; then
-            PID=`cat $PIDFILE`
-            if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
-                printf "%s\n" "Process dead but pidfile exists"
-            else
-                echo "Running"
-            fi
-        else
-            printf "%s\n" "Service not running"
-        fi
-;;
+PIDFILE="/var/run/\$NAME.pid"
+SCRIPTNAME="/etc/init.d/\$NAME"
+
+case "\$1" in
+
+start) 
+        echo -n "Starting \$DESC: "
+        start-stop-daemon --start --chdir \$DAEMON_PATH --background --pidfile \$PIDFILE --make-pidfile --exec \$DAEMON && echo "OK"
+        ;;
+
 stop)
-        printf "%-50s" "Stopping $NAME"
-            PID=`cat $PIDFILE`
-            cd $DAEMON_PATH
-        if [ -f $PIDFILE ]; then
-            kill -HUP $PID
-            printf "%s\n" "Ok"
-            rm -f $PIDFILE
-        else
-            printf "%s\n" "pidfile not found"
-        fi
-;;
- 
+        echo -n "Stopping \$DESC: "
+        start-stop-daemon --stop --pidfile \$PIDFILE && echo "OK"
+        ;;
+
 restart)
-    $0 stop
-    $0 start
-;;
- 
+        echo "Restarting \$DESC: " 
+        \$0 stop
+        sleep 1
+        \$0 start
+        ;;
+
 *)
-        echo "Usage: $0 {status|start|stop|restart}"
+        echo "Usage: \$0 {start|stop|restart}"
         exit 1
+        ;;
+
 esac
+
+exit 0
 EOF
 
 chmod +x /etc/init.d/glastopf
