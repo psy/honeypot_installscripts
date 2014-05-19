@@ -1,4 +1,6 @@
-glastopf_installscript
+honeypot installscripts
 ======================
 
-Install script for the Glastopf honeypot
+Install scripts for
+  * Glastopf Web Application Honeypot
+  * Kippo SSH Honeypot
