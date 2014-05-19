@@ -44,15 +44,15 @@ $PIP_CMD install glastopf
 echo "Upgradeing greenlet"
 $PIP_CMD install --upgrade greenlet
 
+# Install mysql and create mysql user
+echo -e "Installing mysql-server for logging, remember password!"
+read -p "Hit [ENTER] to continue."
+
 echo "Creating glastopf directory and creating config files"
 mkdir -p ${GT_INSTALL_DIR}
 cd ${GT_INSTALL_DIR}
 glastopf-runner&
 GT_PID=$!
-
-# Install mysql and create mysql user
-echo -e "Installing mysql-server for logging, remember password!"
-read -p "Hit [ENTER] to continue."
 
 $APT_CMD $APT_OPTS install mysql-server
 mysql_pw=$(pwgen 30 1)
@@ -72,6 +72,8 @@ sed -i "s/\(consolelog_enabled *= *\).*/\1False/" ${GT_INSTALL_DIR}glastopf.cfg
 # Currently not working beacause of "ValueError: sample larger than population"
 #sed -i "s/\(connection_string *= *\).*/\1mysql:\/\/glastopf:$mysql_pw@localhost\/glastopf/" ${GT_INSTALL_DIR}glastopf.cfg
 
+
+# Sample init script by http://werxltd.com/wp/2012/01/05/simple-init-d-script-template/
 cat > /etc/init.d/glastopf <<"EOF"
 #!/bin/bash
 
@@ -148,6 +150,4 @@ update-rc.d glastopf defaults
 
 
 echo "Restarting glastopf"
-kill -9 $GT_PID
-
-/etc/init.d/glastopf start
+kill -9 $GT_PID && /etc/init.d/glastopf start
