@@ -50,3 +50,5 @@ sed -i "s/^Port 22$/Port 4711/" /etc/ssh/sshd_config
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
 iptables-save > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
+
+echo "Kippo installation done. Your kippo is now listening on port 22, your real sshd is listening on port 4711 now!"
