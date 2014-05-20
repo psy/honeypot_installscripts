@@ -51,6 +51,8 @@ glastopf-runner &> /dev/null &
 GT_PID=$!
 
 # Install mysql and create mysql user
+dpkg -s mysql-server &> /dev/null
+
 if [ $? -ne 0 ]
 then
         read -p "Installing mysql-server, remember password! Hit [ENTER] to continue."
