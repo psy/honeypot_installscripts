@@ -44,10 +44,10 @@ $PIP_CMD install glastopf
 echo "Upgradeing greenlet"
 $PIP_CMD install --upgrade greenlet
 
-echo "Creating glastopf directory and creating config files"
+echo "Creating glastopf directory and config files"
 mkdir -p ${GT_INSTALL_DIR}
 cd ${GT_INSTALL_DIR}
-glastopf-runner &> /dev/null &
+glastopf-runner --prepare &> /dev/null &
 GT_PID=$!
 
 # Install mysql and create mysql user
@@ -135,4 +135,4 @@ update-rc.d glastopf defaults
 
 
 echo "Restarting glastopf"
-kill -9 $GT_PID && /etc/init.d/glastopf start
+kill -9 $GT_PID &> /dev/null && /etc/init.d/glastopf start
