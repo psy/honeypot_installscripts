@@ -47,6 +47,6 @@ EOL
 sed -i "s/^Port 22$/Port 4711/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 4711
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
 iptables-save > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
