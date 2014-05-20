@@ -92,7 +92,7 @@ cat > /etc/init.d/glastopf <<EOF
 ### END INIT INFO
 
 DAEMON_PATH="${GT_INSTALL_DIR}"
-DAEMON="$(which glastopf-runner)""
+DAEMON="$(which glastopf-runner)"
  
 NAME="glastopf"
 DESC="Glastopf Honeypot"
