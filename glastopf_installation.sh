@@ -51,11 +51,16 @@ glastopf-runner &> /dev/null &
 GT_PID=$!
 
 # Install mysql and create mysql user
-echo -e "Installing mysql-server for logging, remember password!"
-read -p "Hit [ENTER] to continue."
-$APT_CMD $APT_OPTS install mysql-server
+if [ $? -ne 0 ]
+then
+        read -p "Installing mysql-server, remember password! Hit [ENTER] to continue."
+        $APT_CMD $APT_OPTS install mysql-server
+fi
+
+read -s -p "Please enter your mysql root password: " MYSQL_ROOT_PW
+
 mysql_pw=$(pwgen 30 1)
-echo "CREATE DATABASE glastopf; GRANT ALL ON glastopf.* TO 'glastopf'@'localhost' IDENTIFIED BY '$mysql_pw'" | mysql -u root -h localhost -p
+echo "CREATE DATABASE glastopf; GRANT ALL ON glastopf.* TO 'glastopf'@'localhost' IDENTIFIED BY '$mysql_pw'" | mysql -u root -h localhost --password="${MYSQL_ROOT_PW}"
 
 if [ ! -f ${GT_INSTALL_DIR}glastopf.cfg.bak ]; then
 	echo "Backing up glastopf.cfg"
