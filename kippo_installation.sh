@@ -85,9 +85,9 @@ stop)
 
 restart)
         echo "Restarting \$DESC: " 
-        $0 stop
+        \$0 stop
         sleep 1
-        $0 start
+        \$0 start
         ;;
 
 *)
