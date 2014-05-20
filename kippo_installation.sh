@@ -16,7 +16,7 @@ tar -xvzf kippo-0.8.tar.gz
 mv kippo-0.8/ ${KIPPO_INSTALL_DIR}
 cd ${KIPPO_INSTALL_DIR}
 
-dpkg -s mysql-server > /dev/null
+dpkg -s mysql-server &> /dev/null
 
 if [ $? -ne 0 ]
 then
