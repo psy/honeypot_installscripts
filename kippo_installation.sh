@@ -32,7 +32,7 @@ echo "CREATE DATABASE kippo; GRANT ALL ON kippo.* TO 'kippo'@'localhost' IDENTIF
 
 mysql -u root -h localhost --password="${MYSQL_ROOT_PW}" kippo < ${KIPPO_INSTALL_DIR}doc/sql/mysql.sql
 
-cat > ${KIPPO_INSTALL_DIR}kippo.cfg <<EOL
+cat >> ${KIPPO_INSTALL_DIR}kippo.cfg <<EOL
 
 [database_mysql]
 host = localhost
@@ -109,7 +109,14 @@ sed -i "s/^Port 22$/Port 4711/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
+
+# Prevent kippo port from showing up on portscans
+iptables -A INPUT -p tcp -s localhost --dport 2222 -j ACCEPT
+iptables -A INPUT -p tcp --dport 2222 -j DROP
+
 iptables-save > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
+
+/etc/init.d/kippo start
 
 echo "Kippo installation done. Your kippo is now listening on port 22, your real sshd is listening on port 4711 now!"
