@@ -65,7 +65,7 @@ PIDFILE="\$PIDDIR/\$NAME.pid"
 SCRIPTNAME="/etc/init.d/\$NAME"
 
 DAEMON_PATH="${KIPPO_INSTALL_DIR}"
-DAEMON="${which twistd}"
+DAEMON="$(which twistd)"
 DAEMON_ARGS="-y kippo.tac -l log/kippo.log --pidfile \$PIDFILE"
  
 [ -d "\$PIDDIR" ] || mkdir -p "\$PIDDIR" && chown kippo "\$PIDDIR"
