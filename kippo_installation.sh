@@ -100,8 +100,8 @@ esac
 exit 0
 EOF
 
-chmod +x /etc/init.d/glastopf
-update-rc.d glastopf defaults
+chmod +x /etc/init.d/kippo
+update-rc.d kippo defaults
 
 
 # move ssh port away from port 22
