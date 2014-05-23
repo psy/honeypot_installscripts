@@ -113,6 +113,8 @@ sed -i "s/^Port 22$/Port 4711/" /etc/ssh/sshd_config
 sed -i "s/\(# *bindadress *bindport *connectaddress *connectport.*\)/\1\n$(curl ifconfig.me) 22 localhost 2222/" /etc/rinetd.conf
 update-rc.d rinetd defaults
 
+/etc/init.d/rinetd/restart
+
 # Prevent kippo port from showing up on portscans
 iptables -A INPUT -p tcp -s localhost --dport 2222 -j ACCEPT
 iptables -A INPUT -p tcp --dport 2222 -j DROP
