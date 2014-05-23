@@ -4,7 +4,7 @@ KIPPO_INSTALL_DIR="/opt/kippo/"
 APT_CMD=$(which apt-get)
 APT_OPTS="--yes --no-install-recommends"
 
-$APT_CMD $APT_OPTS install python-twisted python-mysqldb iptables-persistent pwgen
+$APT_CMD $APT_OPTS install curl python-twisted python-mysqldb iptables-persistent rinetd pwgen
 
 # download kippo
 cd /tmp/
@@ -108,7 +108,9 @@ update-rc.d kippo defaults
 sed -i "s/^Port 22$/Port 4711/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
-iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
+# redirecting now done with rinetd
+#iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
+sed -i "s/\(# *bindadress *bindport *connectaddress *connectport.*\)/\1\n$(curl ifconfig.me) 22 localhost 2222/" /etc/rinetd.conf
 
 # Prevent kippo port from showing up on portscans
 iptables -A INPUT -p tcp -s localhost --dport 2222 -j ACCEPT
