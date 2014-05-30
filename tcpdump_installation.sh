@@ -33,7 +33,7 @@ cat > /etc/init.d/tcpdump <<EOF
 
 DAEMON_PATH="${TD_INSTALL_DIR}"
 DAEMON="$(which tcpdump)"
-DAEMON_ARGS="-i eth0 -s 65535 -w log/tcpdump.pcap -C 1000 port ! 22"
+DAEMON_ARGS="-i eth0 -s 65535 -w log/tcpdump.pcap -C 1000 port ! 22 and port ! 4711"
  
 NAME="tcpdump"
 DESC="Tcpdump"
@@ -68,3 +68,6 @@ esac
 
 exit 0
 EOF
+
+chmod +x /etc/init.d/tcpdump
+/etc/init.d/tcpdump start
