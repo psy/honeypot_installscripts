@@ -17,15 +17,15 @@ export PATH=$PATH:/usr/local/go/bin
 #echo "export PATH=$PATH:/usr/local/go/bin" >> /etc/profile
 
 git clone git://github.com/elasticsearch/logstash-forwarder.git
-cd logstash-forwarder
+cd logstash-forwarder/
 go build
 
 #gem install fpm
 #make deb
-
+mkdir -p ${LS_INSTALL_DIR}bin
 mkdir -p ${LS_INSTALL_DIR}config
 
-mv ./build/bin/ $LS_INSTALL_DIR/
+cp logstash-forwarder logstash-forwarder.sh ${LS_INSTALL_DIR}bin/
 
 cat > ${LS_INSTALL_DIR}config/config <<EOF
 {
@@ -103,13 +103,13 @@ esac
 exit 0
 EOF
 
-chmod +x $SCRIPTNAME
+chmod +x /etc/init.d/logstash-forwarder
 update-rc logstash-forwarder defaults
 
 
 read -s -p "Please copy your ssl ca file to /etc/ssl/logstash.pub and press [ENTER]. If you want to do this step later and start logstash-forwarder manually, type \"N\" and press [Enter]" CONTINUE
 
 if [ "$CONTINUE" != "N" ]; then
-        $SCRIPTNAME start
+        /etc/init.d/logstash-forwarder start
 fi
 
