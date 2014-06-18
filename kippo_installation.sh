@@ -117,7 +117,7 @@ update-rc.d rinetd defaults
 
 # Prevent kippo port from showing up on portscans
 iptables -A INPUT -p tcp -s localhost --dport 2222 -j ACCEPT
-iptables -A INPUT -p tcp --dport 2222 -j DROP
+iptables -A INPUT -p tcp --dport 2222 -j REJECT
 
 iptables-save > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
