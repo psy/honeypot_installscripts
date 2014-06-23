@@ -4,7 +4,7 @@ LS_INSTALL_DIR="/opt/logstash-forwarder/"
 APT_CMD=$(which apt-get)
 APT_OPTS="--yes --no-install-recommends"
 
-read -s -p "Please insert your logstash servers IP and Port (ip:port): " ES_IP
+read -p "Please insert your logstash servers IP and Port (ip:port): " ES_IP
 
 $APT_CMD $APT_OPTS install git rubygems
 
@@ -107,7 +107,7 @@ chmod +x /etc/init.d/logstash-forwarder
 update-rc logstash-forwarder defaults
 
 
-read -s -p "Please copy your ssl ca file to /etc/ssl/logstash.pub and press [ENTER]. If you want to do this step later and start logstash-forwarder manually, type \"N\" and press [Enter]" CONTINUE
+read -p "Please copy your ssl ca file to /etc/ssl/logstash.pub and press [ENTER]. If you want to do this step later and start logstash-forwarder manually, type \"N\" and press [Enter]" CONTINUE
 
 if [ "$CONTINUE" != "N" ]; then
         /etc/init.d/logstash-forwarder start
