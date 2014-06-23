@@ -109,15 +109,16 @@ sed -i "s/^Port 22$/Port 4711/" /etc/ssh/sshd_config
 /etc/init.d/ssh restart
 
 # redirecting now done with rinetd
-#iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
-sed -i "s/\(# *bindadress *bindport *connectaddress *connectport.*\)/\1\n$(curl ifconfig.me) 22 localhost 2222/" /etc/rinetd.conf
-update-rc.d rinetd defaults
-
-/etc/init.d/rinetd restart
+# BAD IDEA! rinetd is dropping source ip adress!
+#sed -i "s/\(# *bindadress *bindport *connectaddress *connectport.*\)/\1\n$(curl ifconfig.me) 22 localhost 2222/" /etc/rinetd.conf
+#update-rc.d rinetd defaults
+#/etc/init.d/rinetd restart
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 22 -j REDIRECT --to-port 2222
 
 # Prevent kippo port from showing up on portscans
-iptables -A INPUT -p tcp -s localhost --dport 2222 -j ACCEPT
-iptables -A INPUT -p tcp --dport 2222 -j REJECT
+# Better do this with your (external) firewall!
+#iptables -A INPUT -p tcp -s localhost --dport 2222 -j ACCEPT
+#iptables -A INPUT -p tcp --dport 2222 -j REJECT
 
 iptables-save > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
