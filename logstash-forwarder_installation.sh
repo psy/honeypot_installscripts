@@ -67,7 +67,7 @@ cat > /etc/init.d/logstash-forwarder <<EOF
 
 DAEMON_PATH="${LS_INSTALL_DIR}bin/"
 DAEMON="logstash-forwarder"
-DAEMON_ARGS="-config ${LS_INSTALL_DIR}config/config"
+DAEMON_ARGS="-config ${LS_INSTALL_DIR}config/config -log-to-syslog"
  
 NAME="logstash-forwarder"
 DESC="logstash-forwarder"
