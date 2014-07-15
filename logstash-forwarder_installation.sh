@@ -104,7 +104,7 @@ exit 0
 EOF
 
 chmod +x /etc/init.d/logstash-forwarder
-update-rc logstash-forwarder defaults
+update-rc.d logstash-forwarder defaults
 
 
 read -p "Please copy your ssl ca file to /etc/ssl/logstash.pub and press [ENTER]. If you want to do this step later and start logstash-forwarder manually, type \"N\" and press [Enter]" CONTINUE
