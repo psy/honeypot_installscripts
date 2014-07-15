@@ -6,6 +6,7 @@ Install scripts for
   * Kippo SSH Honeypot
   * Tcpdump for logging general traffic
   * Logstash-Forwarder for transfering the data to our logstash / elasticsearch server
+  * Justniffer
 
 Planned:
-  * tcpflow
+  * ~~tcpflow~~
