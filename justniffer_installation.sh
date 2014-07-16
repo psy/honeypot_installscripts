@@ -19,6 +19,9 @@ make install
 
 mkdir -p $JS_LOG_DIR
 
+echo "Looking up own ip"
+$OWN_IP=$(curl ifconfig.me)
+
 # create init skript!
 cat > /etc/init.d/justniffer <<EOF
 #!/bin/bash
@@ -40,20 +43,16 @@ DESC="Justniffer Network Traffic Analyzer"
 PIDFILE="/var/run/\$NAME.pid"
 SCRIPTNAME="/etc/init.d/\$NAME"
 
-#DAEMON_PATH="${JS_LOG_DIR}"
-#DAEMON="$(which justniffer)"
-#DAEMON_ARGS="-i eth0 -l \"LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request\" -p \"dst port not 4711\" >> $JS_LOG_DIR"
-
 case "\$1" in
 
 start) 
-		if [[ -f \$PIDFILE && "\$(pgrep -F \$PIDFILE)" == "" ]]; then
+		if [[ -f \$PIDFILE && "\$(pgrep -F \$PIDFILE)" != "" ]]; then
 			echo "Already running!"
 			exit 1
 		fi
 
         echo -n "Starting \$DESC: "
-        $(which justniffer) -i eth0 -l "LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request" -p "dst port not 4711" >> ${JS_LOG_DIR}log &
+        $(which justniffer) -i -x eth0 -l "LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request" -p "not ((dst host $OWN_IP and dst port 4711) or (src host $OWN_IP and dst port 5000))" >> ${JS_LOG_DIR}log &
         echo \$! > \$PIDFILE
         if [ \$(pgrep -F \$PIDFILE) ]; then
         	echo "OK"
