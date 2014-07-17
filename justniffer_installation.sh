@@ -5,7 +5,7 @@ JS_LOG_DIR="/opt/justniffer/logs/"
 APT_CMD=$(which apt-get)
 APT_OPTS="--yes --no-install-recommends"
 
-$APT_CMD $APT_OPTS install patch tar make libc6 libpcap0.8 libpcap0.8-dev g++ gcc libboost-iostreams-dev libboost-program-options-dev libboost-regex-dev
+$APT_CMD $APT_OPTS install curl patch tar make libc6 libpcap0.8 libpcap0.8-dev g++ gcc libboost-iostreams-dev libboost-program-options-dev libboost-regex-dev
 
 cd /tmp/
 
@@ -52,7 +52,7 @@ start)
 		fi
 
         echo -n "Starting \$DESC: "
-        $(which justniffer) -i -x eth0 -l "LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request" -p "not ((dst host $OWN_IP and dst port 4711) or (src host $OWN_IP and dst port 5000))" >> ${JS_LOG_DIR}log &
+        $(which justniffer) -i eth0 -x -l "LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request" -p "not ((dst host $OWN_IP and dst port 4711) or (src host $OWN_IP and dst port 5000))" >> ${JS_LOG_DIR}log &
         echo \$! > \$PIDFILE
         if [ \$(pgrep -F \$PIDFILE) ]; then
         	echo "OK"
@@ -95,8 +95,6 @@ cat > /etc/logrotate.d/justniffer <<EOF
 	compress
 	delaycompress
 	notifempty
-	postrotate
-		/etc/init.d/justniffer restart
 }
 EOF
 
