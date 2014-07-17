@@ -20,7 +20,7 @@ make install
 mkdir -p $JS_LOG_DIR
 
 echo "Looking up own ip"
-$OWN_IP=$(curl ifconfig.me)
+$OWN_IP="$(curl ifconfig.me)"
 
 # create init skript!
 cat > /etc/init.d/justniffer <<EOF
