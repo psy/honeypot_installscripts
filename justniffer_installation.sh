@@ -95,6 +95,9 @@ cat > /etc/logrotate.d/justniffer <<EOF
 	compress
 	delaycompress
 	notifempty
+        postrotate
+                /etc/init.d/justniffer restart
+        endscript
 }
 EOF
 
