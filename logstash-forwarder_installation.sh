@@ -45,6 +45,11 @@ cat > ${LS_INSTALL_DIR}config/config <<EOF
         "/opt/kippo/log/kippo.log"
       ],
       "fields": { "type": "kippo" }
+    }, {
+      "paths": [
+        "/opt/justniffer/log/log"
+      ],
+      "fields": { "type": "justniffer" }
     }
   ]
 }

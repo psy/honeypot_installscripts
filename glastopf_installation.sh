@@ -17,7 +17,7 @@ $APT_CMD $APT_OPTS install python-beautifulsoup python-pip python-dev python-set
 $APT_CMD $APT_OPTS install g++ git php5-common php5-cgi php5 php5-dev liblapack-dev gfortran
 $APT_CMD $APT_OPTS install libxml2-dev libxslt-dev
 $APT_CMD $APT_OPTS install libmysqlclient-dev
-$APT_CMD $APT_OPTS install pwgen
+$APT_CMD $APT_OPTS install pwgen iptables-persistent 
 
 PIP_CMD=$(which pip)
 
@@ -77,6 +77,12 @@ sed -i "s/\(consolelog_enabled *= *\).*/\1False/" ${GT_INSTALL_DIR}glastopf.cfg
 # 2. Enable mysql logging
 # Currently not working beacause of "ValueError: sample larger than population"
 #sed -i "s/\(connection_string *= *\).*/\1mysql:\/\/glastopf:$mysql_pw@localhost\/glastopf/" ${GT_INSTALL_DIR}glastopf.cfg
+
+# Emulate Plesk as well
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 8443 -j REDIRECT --to-port 80
+
+iptables-save > /etc/iptables/rules.v4
+ip6tables-save > /etc/iptables/rules.v6
 
 cat > /etc/init.d/glastopf <<EOF
 #!/bin/bash

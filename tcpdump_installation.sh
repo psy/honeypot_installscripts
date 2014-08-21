@@ -16,6 +16,13 @@ mkdir -p /opt/tcpdump/log/
 
 echo "/dev/vg00/tcpdump /opt/tcpdump ext4 defaults,noatime 0 2" >> /etc/fstab
 
+cat /etc/cron.daily/tcpdump.cleanup <<EOF
+#!/bin/bash
+
+find ${TD_INSTALL_DIR}log/ -atime +40 -print0 | xargs -0 /bin/rm -f    
+EOF
+chmod +x /etc/cron.daily/tcpdump.cleanup
+
 cat > /etc/init.d/tcpdump <<EOF
 #!/bin/bash
 
