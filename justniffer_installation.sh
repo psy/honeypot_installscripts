@@ -20,7 +20,7 @@ make install
 mkdir -p $JS_LOG_DIR
 
 echo "Looking up own ip"
-$OWN_IP=$(curl ifconfig.me)
+$OWN_IP="$(curl ifconfig.me)"
 
 # create init skript!
 cat > /etc/init.d/justniffer <<EOF
@@ -50,7 +50,7 @@ start)
 		fi
 
         echo -n "Starting \$DESC: "
-        $(which justniffer) -i eth0 -x -l "LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request" -p "dst port not 4711 or 4949 or 5000" >> ${JS_LOG_DIR}log &
+        $(which justniffer) -i eth0 -x -l "LOGBOUNDARY%newline%request.timestamp(%Y-%m-%dT%H:%M:%S%z) %source.ip %source.port -> %dest.ip %dest.port %request.line%newline%request" -p "dst port not (4711 or 4949 or 5000)" >> ${JS_LOG_DIR}log &
         # -p "not ((dst host $OWN_IP and dst port (4711 or 4949)) or (src host $OWN_IP and dst port 5000))"
         echo \$! > \$PIDFILE
         if [ \$(pgrep -F \$PIDFILE) ]; then
